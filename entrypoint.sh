@@ -51,7 +51,7 @@ fi
 
 # Create the Fly PostgreSQL instance if it doesn't exist.
 if ! flyctl status --app "$postgres_app"; then
-    flyctl postgres create --name "$postgres_app" --region "$region"
+  flyctl postgres create --name "$postgres_app" --region "$region"
 fi
 
 # Deploy the Fly app, creating it first if needed.
