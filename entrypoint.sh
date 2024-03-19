@@ -51,7 +51,7 @@ fi
 
 # Deploy the Fly app, creating it first if needed.
 if ! flyctl status --app "$app"; then
-  flyctl apps create --name "$app" --org "$org" --region "$region"
+  flyctl apps create --name "$app" --org "$org"
 
   # Attach postgres cluster and set the DATABASE_URL
   flyctl postgres attach "$postgres_app" --app "$app"
