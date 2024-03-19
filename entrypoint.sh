@@ -53,7 +53,10 @@ fi
 if ! flyctl status --app "$app"; then
   flyctl apps create --name "$app" --org "$org"
 
-  # Attach postgres cluster and set the DATABASE_URL
+  if ! flyctl status --app "$postgres_app"; then
+    flyctl postgres create --name "$postgres_app" --region "$region"
+  fi
+
   flyctl postgres attach "$postgres_app" --app "$app"
   flyctl deploy $detach --app "$app" --region "$region" --strategy immediate --remote-only
 
