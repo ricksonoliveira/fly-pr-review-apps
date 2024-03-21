@@ -39,7 +39,7 @@ else
   detach="--detach"
 fi
 
-if [ -n "$build_secret_key"]; then
+if [ -n "$build_secret_key" ]; then
   build_secret="--build-secret $build_secret_key=$build_secret_value"
 else
   build_secret=""
