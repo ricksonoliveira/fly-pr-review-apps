@@ -21,3 +21,9 @@ inputs:
   dockerfile:
     description: Path to a Dockerfile, will be used for building the image
     required: true
+  secret_key:
+    description: 'The secret key'
+    required: true
+  secret_value:
+    description: 'The secret value'
+    required: true
