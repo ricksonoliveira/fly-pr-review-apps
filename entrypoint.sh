@@ -49,14 +49,13 @@ if [ "$EVENT_TYPE" = "closed" ]; then
   exit 0
 fi
 
-# Create the Fly PostgreSQL instance if it doesn't exist.
-if ! flyctl status --app "$postgres_app"; then
-  flyctl postgres create --name "$postgres_app" --region "$region"
-fi
-
 # Deploy the Fly app, creating it first if needed.
 if ! flyctl status --app "$app"; then
   flyctl apps create --name "$app" --org "$org"
+
+  if ! flyctl status --app "$postgres_app"; then
+    flyctl postgres create --name "$postgres_app" --region "$region" --org "$org" --volume-size 1 --initial-cluster-size 3 --vm-size "shared-cpu-1x"
+  fi
 
   flyctl postgres attach "$postgres_app" --app "$app"
   flyctl deploy $detach --app "$app" --region "$region" --strategy immediate --remote-only
