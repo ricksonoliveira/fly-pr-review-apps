@@ -23,7 +23,9 @@ inputs:
     required: true
   secret_key:
     description: 'The secret key'
-    required: true
   secret_value:
     description: 'The secret value'
-    required: true
+  build_secret_key:
+    description: 'The secret key for the deploy arg --build-secret'
+  build_secret_value:
+    description: 'The secret value for the deploy arg --build-secret type is stringArray'
