@@ -26,6 +26,8 @@ postgres_app="${INPUT_POSTGRES:-$REPO_NAME-pr-$PR_NUMBER-postgres}"
 region="${INPUT_REGION:-${FLY_REGION:-ord}}"
 org="${INPUT_ORG:-${FLY_ORG:-personal}}"
 dockerfile="$INPUT_DOCKERFILE"
+my_secret_key="$INPUT_SECRET_KEY"
+my_secret_value="$INPUT_SECRET_VALUE"
 
 # only wait for the deploy to complete if the user has requested the wait option
 # otherwise detach so the GitHub action doesn't run as long
@@ -58,6 +60,7 @@ if ! flyctl status --app "$app"; then
   fi
 
   flyctl postgres attach "$postgres_app" --app "$app"
+  flyctl secrets set "$my_secret_key"="$my_secret_value" --app "$app"
   flyctl deploy $detach --app "$app" --region "$region" --strategy immediate --remote-only
 
   statusmessage="Review app created. It may take a few minutes for the app to deploy."
