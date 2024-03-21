@@ -22,7 +22,7 @@ EVENT_TYPE=$(jq -r .action /github/workflow/event.json)
 # Default the Fly app name to {repo_name}-pr-{pr_number}
 app="${INPUT_NAME:-$REPO_NAME-pr-$PR_NUMBER}"
 # # Default the Fly app name to {repo_name}-pr-{pr_number}-postgres
-postgres_app="${INPUT_POSTGRES:-$REPO_NAME-pr-$PR_NUMBER-postgres}"
+postgres_app="${INPUT_POSTGRES:-$REPO_NAME-pr-$PR_NUMBER-db}"
 region="${INPUT_REGION:-${FLY_REGION:-ord}}"
 org="${INPUT_ORG:-${FLY_ORG:-personal}}"
 dockerfile="$INPUT_DOCKERFILE"
@@ -60,14 +60,16 @@ if ! flyctl status --app "$app"; then
   fi
 
   flyctl postgres attach "$postgres_app" --app "$app"
-  if "$secret_key" && "$secret_value"; then
+  # Run secrets if they are provided
+  if [ -n "$secret_key" ]; then
     flyctl secrets set "$secret_key"="$secret_value" --app "$app"
   fi
   flyctl deploy $detach --app "$app" --region "$region" --strategy immediate --remote-only
 
   statusmessage="Review app created. It may take a few minutes for the app to deploy."
 elif [ "$EVENT_TYPE" = "synchronize" ]; then
-  if "$secret_key" && "$secret_value"; then
+  # Run secrets if they are provided
+  if [ -n "$secret_key" ]; then
     flyctl secrets set "$secret_key"="$secret_value" --app "$app"
   fi
   flyctl deploy $detach --app "$app" --region "$region" --strategy immediate --remote-only
