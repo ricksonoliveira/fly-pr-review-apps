@@ -10,6 +10,8 @@ runs:
 inputs:
   name:
     description: Fly app name
+  config:
+    description: Optional path to a custom Fly toml config. Config path should be relative to `path` parameter, if specified.
   region:
     description: Region to launch the app in (alternatively, set the env FLY_REGION)
   org:

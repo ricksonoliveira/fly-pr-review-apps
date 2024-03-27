@@ -30,6 +30,7 @@ secret_key="$INPUT_SECRET_KEY"
 secret_value="$INPUT_SECRET_VALUE"
 build_secret_key="$INPUT_BUILD_SECRET_KEY"
 build_secret_value="$INPUT_BUILD_SECRET_VALUE"
+config="${INPUT_CONFIG:-fly.toml}"
 
 # only wait for the deploy to complete if the user has requested the wait option
 # otherwise detach so the GitHub action doesn't run as long
@@ -59,6 +60,8 @@ if [ "$EVENT_TYPE" = "closed" ]; then
   exit 0
 fi
 
+echo "Contents of config $config file: " && cat "$config"
+
 # Deploy the Fly app, creating it first if needed.
 if ! flyctl status --app "$app"; then
   flyctl apps create --name "$app" --org "$org"
@@ -72,7 +75,7 @@ if ! flyctl status --app "$app"; then
   if [ -n "$secret_key" ]; then
     flyctl secrets set "$secret_key"="$secret_value" --app "$app"
   fi
-  flyctl deploy $detach $build_secret --app "$app" --region "$region" --strategy immediate --remote-only
+  flyctl deploy --config "$config" $detach $build_secret --app "$app" --region "$region" --strategy immediate --remote-only
 
   statusmessage="Review app created. It may take a few minutes for the app to deploy."
 elif [ "$EVENT_TYPE" = "synchronize" ]; then
@@ -80,7 +83,7 @@ elif [ "$EVENT_TYPE" = "synchronize" ]; then
   if [ -n "$secret_key" ]; then
     flyctl secrets set "$secret_key"="$secret_value" --app "$app"
   fi
-  flyctl deploy $detach $build_secret --app "$app" --region "$region" --strategy immediate --remote-only
+  flyctl deploy --config "$config" $detach $build_secret --app "$app" --region "$region" --strategy immediate --remote-only
   statusmessage="Review app updated. It may take a few minutes for your changes to be deployed."
 fi
 
