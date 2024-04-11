@@ -26,13 +26,12 @@ postgres_app="${INPUT_POSTGRES:-$REPO_NAME-pr-$PR_NUMBER-db}"
 region="${INPUT_REGION:-${FLY_REGION:-ord}}"
 org="${INPUT_ORG:-${FLY_ORG:-personal}}"
 dockerfile="$INPUT_DOCKERFILE"
-secret_key="$INPUT_SECRET_KEY"
-secret_value="$INPUT_SECRET_VALUE"
 build_secret_key="$INPUT_BUILD_SECRET_KEY"
 build_secret_value="$INPUT_BUILD_SECRET_VALUE"
 config="${INPUT_CONFIG:-fly.toml}"
 build_args=""
 build_secrets=""
+secrets="${INPUT_SECRETS}"
 
 # only wait for the deploy to complete if the user has requested the wait option
 # otherwise detach so the GitHub action doesn't run as long
@@ -87,16 +86,20 @@ if ! flyctl status --app "$app"; then
 
   flyctl postgres attach "$postgres_app" --app "$app"
   # Run secrets if they are provided
-  if [ -n "$secret_key" ]; then
-    flyctl secrets set "$secret_key"="$secret_value" --app "$app"
+  if [ -n "$secrets" ]; then
+    for secret in $secrets; do
+      flyctl secrets set "$secret" --app "$app"
+    done
   fi
   flyctl deploy --config "$config" $detach $build_secret --app "$app" --region "$region" --strategy immediate ${build_args} ${build_secrets}  --remote-only
 
   statusmessage="Review app created. It may take a few minutes for the app to deploy."
 elif [ "$EVENT_TYPE" = "synchronize" ]; then
   # Run secrets if they are provided
-  if [ -n "$secret_key" ]; then
-    flyctl secrets set "$secret_key"="$secret_value" --app "$app"
+  if [ -n "$secrets" ]; then
+    for secret in $secrets; do
+      flyctl secrets set "$secret" --app "$app"
+    done
   fi
   flyctl deploy --config "$config" $detach $build_secret --app "$app" --region "$region" --strategy immediate ${build_args} ${build_secrets}  --remote-only
   statusmessage="Review app updated. It may take a few minutes for your changes to be deployed."
