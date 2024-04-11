@@ -12,6 +12,10 @@ inputs:
     description: Fly app name
   config:
     description: Optional path to a custom Fly toml config. Config path should be relative to `path` parameter, if specified.
+  build_args:
+    description: Optional Docker --build-arg
+  build_secrets:
+    description: Optional Docker --build-secret
   region:
     description: Region to launch the app in (alternatively, set the env FLY_REGION)
   org:
@@ -20,6 +24,8 @@ inputs:
     description: path to a directory containing a fly.toml to clone
   postgres:
     description: Optionally attach the app to a pre-existing Postgres cluster on Fly
+  secrets:
+    description: Secrets to be set on the app at runtime. Separate multiple secrets with a space
   dockerfile:
     description: Path to a Dockerfile, will be used for building the image
     required: true

@@ -16,6 +16,9 @@ If you have an existing `fly.toml` in your repo, this action will copy it with a
 | `path`     | Path to run the `flyctl` commands from. Useful if you have an existing `fly.toml` in a subdirectory.                                                                                                     |
 | `postgres` | Optional name of an existing Postgres cluster to `flyctl postgres attach` to.                                                                                                                            |                                                                                                                                  |                                                                                                                                       |                                                                                                                                                       |
 | `dockerfile`       | Path to a Dockerfile, that will be used for building the image                                                                                                                             |
+| `secrets`  | Secrets to be set on the app at runtime. Separate multiple secrets with a space                                                                                                                                     |
+| `build_args` | Optional Docker --build-arg |
+| `build_secrets` | Optional Docker --build-secret |
 
 ## Required Secrets
 
@@ -98,7 +101,7 @@ jobs:
 
       - name: Deploy app
         id: deploy
-        uses: superfly/fly-pr-review-apps@1.0.0
+        uses: superfly/fly-pr-review-apps@1.3.0
 
       - name: Clean up GitHub environment
         uses: strumwolf/delete-deployment-environment@v2
@@ -122,7 +125,7 @@ steps:
 
   - name: Deploy app
     id: deploy
-    uses: superfly/fly-pr-review-apps@1.0.0
+    uses: superfly/fly-pr-review-apps@1.3.0
     with:
       postgres: <your-existing-preview-db>
 ```
@@ -138,7 +141,7 @@ steps:
   - uses: actions/checkout@v4
 
   - name: Deploy redis
-    uses: superfly/fly-pr-review-apps@1.0.0
+    uses: superfly/fly-pr-review-apps@1.3.0
     with:
       update: false # Don't need to re-deploy redis when the PR is updated
       path: redis # Keep fly.toml in a subdirectory to avoid confusing flyctl
@@ -147,7 +150,7 @@ steps:
 
   - name: Deploy app
     id: deploy
-    uses: superfly/fly-pr-review-apps@1.0.0
+    uses: superfly/fly-pr-review-apps@1.3.0
     with:
       name: pr-${{ github.event.number }}-myapp-app
 ```
