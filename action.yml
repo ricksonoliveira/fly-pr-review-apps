@@ -29,6 +29,5 @@ inputs:
   dockerfile:
     description: Path to a Dockerfile, will be used for building the image
     required: true
-    description: 'The secret key for the deploy arg --build-secret'
   build_secret_value:
     description: 'The secret value for the deploy arg --build-secret type is stringArray'
